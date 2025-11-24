@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-verison: [19.x, 20.x, 22.x]
+        node-version: [19.x, 20.x, 22.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - uses: actions/chekcout@v2
+      - uses: actions/checkout@v2
       - name: Docker Hub Login
         uses: docker/login-action@v3
         with:
@@ -56,14 +56,14 @@ jobs:
       - name: Check if Docker is installed
         id: check-docker
         run: |
-          DOCKER_EXISTS=$(ssh -i ~/.ssh/id_rsa -o StricHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'command -v docker >/dev/null && echo "true" || echo "false"')
+          DOCKER_EXISTS=$(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'command -v docker >/dev/null && echo "true" || echo "false"')
           echo "docker_exists=$DOCKER_EXISTS" >> $GITHUB_OUTPUT
 
       - name: Check if Node.js is installed
         id: check-nodejs
         run: |
           NODE_EXISTS=$(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'command -v node >/dev/null && echo "true" || echo "false"')
-          echo "docker_exists=$DOCKER_EXISTS" >> $GITHUB_OUTPUT
+          echo "node_exists=$NODE_EXISTS" >> $GITHUB_OUTPUT
 
       - name: Install Docker on EC2
         if: steps.check-docker.outputs.docker_exists == 'false'
@@ -89,7 +89,7 @@ jobs:
           EOF
 
       - name: Install Node.js on EC2
-        if: steps.check-nodejs.outputs.node.exists == 'false'
+        if: steps.check-nodejs.outputs.node_exists == 'false'
         run: | 
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
