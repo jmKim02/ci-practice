@@ -22,7 +22,7 @@ pipeline {
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build --platform linux/amd64 -t "jmin99/express-hello-world:latest .'
+        sh 'docker build --platform linux/amd64 -t jmin99/express-hello-world:latest .'
       }
 
     stage('Push to Docker Hub') {
