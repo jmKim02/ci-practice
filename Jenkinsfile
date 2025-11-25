@@ -24,17 +24,18 @@ pipeline {
       steps {
         sh 'docker build --platform linux/amd64 -t jmin99/express-hello-world:latest .'
       }
+    }
 
     stage('Push to Docker Hub') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'dockerhub-login',
           usernameVariable: 'DOCKER_USERNAME',
-          passwordVariable: 'DOCKER_PASSWORD', 
+          passwordVariable: 'DOCKER_TOKEN', 
         )]) {
           sh '''
           echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USERNAME" --password-stdin
-          docker push "$DOCKER_USERNAME"/express-hello-word:latest
+          docker push "$DOCKER_USERNAME"/express-hello-world:latest
           '''
         }
       }
